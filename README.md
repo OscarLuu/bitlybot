@@ -17,7 +17,5 @@ WIP
 * [ ] call Bitly API for shorten
 * [ ] returns shorten link
 * [ ] dockerize it 
-
-
 * [ ] CI/CD? 
 
