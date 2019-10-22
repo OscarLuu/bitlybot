@@ -1,5 +1,7 @@
-# Discord bot using DiscordGo that shortens long links that come into the server
+# BitlyBot
+### Discord bot using DiscordGo that shortens long links that come into the server
 --
+
 WIP
 
 * [ ] Requires Go installation
