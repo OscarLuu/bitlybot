@@ -4,6 +4,7 @@
 
 WIP
 
+### Installation 
 * [ ] Requires Go installation
 * [ ] Requires `go get github.com/bwmarrin/discordgo`
 * [ ] Discord bot token auth
