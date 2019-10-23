@@ -8,19 +8,15 @@ ifeq (, $(shell which gox))
 $(warning "could not find gox in $(PATH), run: go get github.com/mitchellh/gox")
 endif
 
-.PHONY: fmt vet test build all
+.PHONY: fmt vet build all
 
 default: all
 
-all: fmt vet test build
+all: fmt vet build
 
 fmt:
 	$(info ******************** checking formatting ********************)
 	gofmt -d $(SRC)
-
-test: vet
-	$(info ******************** running tests ********************)
-	go test -v ./...
 
 build:
 	$(info ******************** building ********************)
