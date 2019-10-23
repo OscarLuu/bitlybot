@@ -16,6 +16,7 @@ WIP
 * [ ] check message if it is a link > X characters
 * [ ] call Bitly API for shorten
 * [ ] returns shorten link
+* [ ] scrape the page for title 
 * [ ] deletes comment from above, appends user with @ to new shortened link
 * [ ] dockerize it 
 * [ ] CI/CD? 
