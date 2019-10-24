@@ -8,16 +8,19 @@ import (
 	"net/http"
 )
 
-// Bitly takes the auth token and a url string and returns a shortened
-// link
-func Bitly(link string) {
+type Response struct {
+	Short   string `json:"link"`
+	Long    string `json:"long_url"`
+	Created string `json:"created_at"`
+}
+
+func Bitly(link string) string {
+	var response Response
+
 	url := "https://api-ssl.bitly.com/v4/shorten"
-	token := "<redact>"
-	// Create a Bearer string by appending string access token
+	token := "redacted"
 	var bearer = "Bearer " + token
 
-	// Create a new request using http
-	// Json marshall data
 	jsonData := map[string]string{"long_url": link}
 	jsonValue, _ := json.Marshal(jsonData)
 
@@ -33,6 +36,13 @@ func Bitly(link string) {
 	if err != nil {
 		log.Fatalf("Error on response")
 	}
+
 	body, _ := ioutil.ReadAll(resp.Body)
-	log.Println(string([]byte(body)))
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		log.Fatalf("Issue with unmarshal %s", err)
+	}
+
+	shortLink := response.Short
+	return shortLink
 }
