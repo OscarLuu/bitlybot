@@ -17,17 +17,19 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/OscarLuu/bitlybot/pkg/handler"
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 var (
 	token string
+	// btoken string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -43,7 +45,7 @@ It does this by leveraging the public Bitly API.`,
 			log.Fatalf("getting discord session %v\n", err)
 		}
 
-		discord.AddHandler(handler.MessageCreate)
+		discord.AddHandler(handler.OnMessageCreate)
 
 		err = discord.Open()
 		if err != nil {
@@ -72,4 +74,5 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().StringVar(&token, "token", "", "Discord OAuth Token")
+	// rootCmd.Flags().StringVar(&btoken, "bitly-token", "", "Bitly API Token")
 }
