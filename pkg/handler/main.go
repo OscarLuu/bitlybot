@@ -2,7 +2,7 @@ package handler
 
 import (
 	"regexp"
-
+	
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -18,7 +18,7 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// and has at least one . in it
 	re := regexp.MustCompile(`^http*\.*`)
 	if re.MatchString(m.Content) {
-		s.ChannelMessageSend(m.ChannelID, m.Content)
+		// s.ChannelMessageSend(m.ChannelID, m.Content)
 		// this is where we want to call bitly api and pass the link as string
 		// should return here and have channel message send the short link
 		// calls ChannelMessageDelete to delete the users link

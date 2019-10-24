@@ -19,6 +19,18 @@ limitations under the License.
 package main
 
 import "github.com/OscarLuu/bitlybot/cmd"
+// Vars used for command line params
+var (
+	Token string
+	Bitly string
+)
+
+func init() {
+	flag.StringVar(&Token, "token", "", "Auth Token")
+	flag.StringVar(&Bitly, "bitly", "", "Auth Token")
+	flag.Parse()
+}
+>>>>>>> tweaks
 
 func main() {
 	cmd.Execute()
