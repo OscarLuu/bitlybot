@@ -18,7 +18,7 @@ func Bitly(link string) string {
 	var response Response
 
 	url := "https://api-ssl.bitly.com/v4/shorten"
-	token := "redacted"
+	token := ""
 	var bearer = "Bearer " + token
 
 	jsonData := map[string]string{"long_url": link}
@@ -37,12 +37,17 @@ func Bitly(link string) string {
 		log.Fatalf("Error on response")
 	}
 
-	body, _ := ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		log.Fatalf("Issue with unmarshal %s", err)
+	if resp.StatusCode == 200 || resp.StatusCode == 201 {
+		body, _ := ioutil.ReadAll(resp.Body)
+		err = json.Unmarshal(body, &response)
+		if err != nil {
+			log.Fatalf("Issue with unmarshal %s", err)
+		}
+		log.Printf("SUCCESS: Response code %d", resp.StatusCode)
+		shortLink := response.Short
+		return shortLink
+	} else {
+		log.Printf("ERROR: Response code %d", resp.StatusCode)
+		return "error"
 	}
-
-	shortLink := response.Short
-	return shortLink
 }

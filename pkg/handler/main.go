@@ -15,12 +15,18 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	// regex match for anything that starts with http
-	// and has at least one . in it
+	// Instead of searching for anything that starts with ^http
+	// we should parse the link out of m.Content
 	re := regexp.MustCompile(`^http*\.*`)
 	if re.MatchString(m.Content) {
 		short := api.Bitly(m.Content)
-		s.ChannelMessageSend(m.ChannelID, short)
+		if short == "error" {
+			s.ChannelMessageSend(m.ChannelID, "Request resulted in an error, please try again.")
+		} else {
+			shortAuthor := short + " - Linked By: " + (string(m.Author.Username))
+			s.ChannelMessageSend(m.ChannelID, shortAuthor)
+			MessageDelete(s, m.ChannelID, m.Message.ID)
+		}
 	}
 }
 
@@ -28,5 +34,4 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 func MessageDelete(s *discordgo.Session, chanID string, mID string) {
 	// this function is designed to delete the link message
 	s.ChannelMessageDelete(chanID, mID)
-	s.ChannelMessageSend(chanID, "Hit message delete function")
 }

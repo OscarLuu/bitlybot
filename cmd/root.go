@@ -27,10 +27,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	token string
-	// btoken string
-)
+var token string
+var Btoken string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -74,5 +72,5 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().StringVar(&token, "token", "", "Discord OAuth Token")
-	// rootCmd.Flags().StringVar(&btoken, "bitly-token", "", "Bitly API Token")
+	rootCmd.Flags().StringVar(&Btoken, "bitly-token", "", "Bitly API Token")
 }
