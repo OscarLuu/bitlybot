@@ -24,10 +24,11 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if err != nil {
 			log.Errorf("creating short link %v\n", err)
 			s.ChannelMessageSend(m.ChannelID, "Request resulted in an error, please try again.")
+		} else {
+			shortAuthor := short + " - Linked By: " + (string(m.Author.Username))
+			s.ChannelMessageSend(m.ChannelID, shortAuthor)
+			MessageDelete(s, m.ChannelID, m.Message.ID)
 		}
-		shortAuthor := short + " - Linked By: " + (string(m.Author.Username))
-		s.ChannelMessageSend(m.ChannelID, shortAuthor)
-		MessageDelete(s, m.ChannelID, m.Message.ID)
 	}
 }
 
