@@ -10,20 +10,24 @@ import (
 const SHORTENURL = "https://api-ssl.bitly.com/v4/shorten"
 
 var (
+	// std is the default instance of BitlyAPI.
 	std = New()
 )
 
+// BitlyAPI
 type BitlyAPI struct {
 	token string
 	cli   *http.Client
 }
 
+// New creates a new BitlyAPI with a default HTTP client.
 func New() *BitlyAPI {
 	return &BitlyAPI{
 		cli: http.DefaultClient,
 	}
 }
 
+// SetToken sets the token for the BitlyAPI.
 func SetToken(token string) {
 	std.token = token
 }
@@ -34,10 +38,12 @@ type Response struct {
 	Created string `json:"created_at"`
 }
 
+// Shorten calls bapi.Shorten
 func Shorten(link string) (string, error) {
 	return std.Shorten(link)
 }
 
+// Shorten shortens links by calling the Bitly API.
 func (bapi BitlyAPI) Shorten(link string) (string, error) {
 
 	data := map[string]string{"long_url": link}
@@ -70,6 +76,7 @@ func (bapi BitlyAPI) Shorten(link string) (string, error) {
 	return responseBody.Short, nil
 }
 
+// createRequest creates a POST request.
 func createRequest(b []byte) (*http.Request, error) {
 	req, err := http.NewRequest("POST", SHORTENURL, bytes.NewBuffer(b))
 	if err != nil {
@@ -79,42 +86,3 @@ func createRequest(b []byte) (*http.Request, error) {
 	req.Header.Add("Content-Type", "application/json")
 	return req, nil
 }
-
-/*
-func Bitly(link string) string {
-	var response Response
-
-	token := ""
-	var bearer = "Bearer " + token
-
-	jsonData := map[string]string{"long_url": link}
-	jsonValue, _ := json.Marshal(jsonData)
-
-	req, err := http.NewRequest("POST", SHORTENURL, bytes.NewBuffer(jsonValue))
-	if err != nil {
-		log.Fatalf("Error with setting up request")
-	}
-	req.Header.Add("Authorization", bearer)
-	req.Header.Add("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatalf("Error on response")
-	}
-
-	if resp.StatusCode == 200 || resp.StatusCode == 201 {
-		body, _ := ioutil.ReadAll(resp.Body)
-		err = json.Unmarshal(body, &response)
-		if err != nil {
-			log.Fatalf("Issue with unmarshal %s", err)
-		}
-		log.Printf("SUCCESS: Response code %d", resp.StatusCode)
-		shortLink := response.Short
-		return shortLink
-	} else {
-		log.Printf("ERROR: Response code %d", resp.StatusCode)
-		return "error"
-	}
-}
-*/
