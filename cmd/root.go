@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/OscarLuu/bitlybot/pkg/bitly"
 	"os"
 	"os/signal"
 	"syscall"
@@ -28,8 +29,8 @@ import (
 )
 
 var (
-	token string
-	// btoken string
+	discordToken string
+	bitlyToken   string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -39,8 +40,12 @@ var rootCmd = &cobra.Command{
 	Long: `BitlyBot converts long ugly links to short and friendly ones.
 It does this by leveraging the public Bitly API.`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		// set bitly api token
+		bitly.SetToken(bitlyToken)
+
 		// create new discord client
-		discord, err := discordgo.New(fmt.Sprintf("Bot %s", token))
+		discord, err := discordgo.New(fmt.Sprintf("Bot %s", discordToken))
 		if err != nil {
 			log.Fatalf("getting discord session %v\n", err)
 		}
@@ -73,6 +78,6 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringVar(&token, "token", "", "Discord OAuth Token")
-	// rootCmd.Flags().StringVar(&btoken, "bitly-token", "", "Bitly API Token")
+	rootCmd.Flags().StringVar(&discordToken, "token", "", "Discord OAuth Token")
+	rootCmd.Flags().StringVar(&bitlyToken, "bitly-token", "", "Bitly API Token")
 }
