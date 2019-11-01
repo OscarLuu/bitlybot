@@ -1,8 +1,10 @@
 package handler
 
 import (
-	"github.com/OscarLuu/bitlybot/pkg/bitly"
 	"regexp"
+
+	"github.com/OscarLuu/bitlybot/pkg/bitly"
+	"github.com/OscarLuu/bitlybot/pkg/scraper"
 
 	"github.com/bwmarrin/discordgo"
 	log "github.com/sirupsen/logrus"
@@ -21,20 +23,41 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	re := regexp.MustCompile(`^http*\.*`)
 	if re.MatchString(m.Content) {
 		short, err := bitly.Shorten(m.Content)
+		log.Infof("creating short link %v", short)
 		if err != nil {
 			log.Errorf("creating short link %v", err)
 			s.ChannelMessageSend(m.ChannelID, "Request resulted in an error, please try again.")
 		} else {
-			log.Infof("creating short link %v", short)
-			shortAuthor := short + " - Linked By: " + (string(m.Author.Username))
+			// scraping the title
+			log.Infoln("scraping the webpage for the title")
+			scrape, err := scraper.ScrapeWebPage(short)
+			if err != nil {
+				log.Infof("scraping webpage failed: %v", err)
+			}
+			log.Infof("scraped webpage: %v", scrape)
+
+			// creating and sending the message
+			log.Infof("created short link %v", short)
+			shortAuthor := "\nLinked by: " + (string(m.Author.Username) + "\n\n" + "Title: " + scrape + "\n" + short)
 			s.ChannelMessageSend(m.ChannelID, shortAuthor)
-			MessageDelete(s, m.ChannelID, m.Message.ID)
+
+			// deleting the message
+			log.Infof("deleting former message: %v", m.Content)
+			err = MessageDelete(s, m.ChannelID, m.Message.ID)
+			if err != nil {
+				log.Errorf("deleting former message: %v", err)
+			}
+			log.Infof("deleted former message: %v", m.Content)
 		}
 	}
 }
 
 // MessageDelete deletes message
-func MessageDelete(s *discordgo.Session, chanID string, mID string) {
+func MessageDelete(s *discordgo.Session, chanID string, mID string) error {
 	// this function is designed to delete the link message
-	s.ChannelMessageDelete(chanID, mID)
+	err := s.ChannelMessageDelete(chanID, mID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
