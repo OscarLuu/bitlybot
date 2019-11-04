@@ -17,10 +17,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/OscarLuu/bitlybot/pkg/bitly"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/OscarLuu/bitlybot/pkg/bitly"
 
 	"github.com/OscarLuu/bitlybot/pkg/handler"
 	"github.com/bwmarrin/discordgo"
@@ -50,7 +51,8 @@ It does this by leveraging the public Bitly API.`,
 			log.Fatalf("getting discord session %v\n", err)
 		}
 
-		discord.AddHandler(handler.OnMessageCreate)
+		// discord.AddHandler(handler.OnMessageCreate)
+		discord.AddHandler(handler.EditMessageCreate)
 
 		err = discord.Open()
 		if err != nil {

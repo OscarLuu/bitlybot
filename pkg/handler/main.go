@@ -38,7 +38,7 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 			// creating and sending the message
 			log.Infof("created short link %v", short)
-			shortAuthor := "\nLinked by: " + (string(m.Author.Username) + "\n\n" + "Title: " + scrape + "\n" + short)
+			shortAuthor := " - " + (string(m.Author.Username) + "\n\n" + "Title: " + scrape + "\n" + short)
 			s.ChannelMessageSend(m.ChannelID, shortAuthor)
 
 			// deleting the message
