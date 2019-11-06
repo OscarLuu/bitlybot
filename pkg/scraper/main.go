@@ -25,6 +25,7 @@ func ScrapeWebPage(link string) (string, error) {
 		if tokenType == html.StartTagToken {
 			token := tokenizer.Token()
 			if token.Data == "title" {
+				tokenType = tokenizer.Next()
 				scrape := tokenizer.Token().Data
 				return scrape, err
 			}
