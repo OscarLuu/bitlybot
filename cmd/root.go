@@ -52,7 +52,7 @@ It does this by leveraging the public Bitly API.`,
 		}
 
 		// discord.AddHandler(handler.OnMessageCreate)
-		discord.AddHandler(handler.EditMessageCreate)
+		discord.AddHandler(handler.OnMessageCreate)
 
 		err = discord.Open()
 		if err != nil {
