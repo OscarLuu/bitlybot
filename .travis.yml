@@ -1,0 +1,30 @@
+language: go
+
+go:
+  - 1.13.x
+
+services:
+  - docker
+
+stages:
+  - lint
+  - vet
+  - deploy
+
+install:
+  - curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
+  - chmod +x skaffold
+  - mv skaffold /home/travis/bin/
+  - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.17.1/bin/linux/amd64/kubectl
+  - chmod +x kubectl
+  - mv kubectl /home/travis/bin/
+  - go get -u github.com/mitchellh/gox
+
+jobs:
+  include:
+    - stage: lint
+      script: make fmt
+    - stage: vet
+      script: make vet
+    - stage: deploy
+      script: make deploy
