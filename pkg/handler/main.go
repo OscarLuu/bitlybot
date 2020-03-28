@@ -24,7 +24,6 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	re := regexp.MustCompile(`http([^\s]+)`)
 	if re.MatchString(m.Content) {
 		link := re.FindString(m.Content)
-		log.Infof("%v", link)
 		short, err := bitly.Shorten(link)
 		log.Infof("creating short link %v", short)
 		if err != nil {
