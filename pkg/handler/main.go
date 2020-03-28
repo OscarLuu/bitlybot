@@ -20,9 +20,12 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Instead of searching for anything that starts with ^http
 	// we should parse the link out of m.Content
-	re := regexp.MustCompile(`^http*\.*`)
+	// blah bit.ly blah
+	re := regexp.MustCompile(`http([^\s]+)`)
 	if re.MatchString(m.Content) {
-		short, err := bitly.Shorten(m.Content)
+		link := re.FindString(m.Content)
+		log.Infof("%v", link)
+		short, err := bitly.Shorten(link)
 		log.Infof("creating short link %v", short)
 		if err != nil {
 			log.Errorf("creating short link %v", err)
