@@ -2,6 +2,7 @@ package handler
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/OscarLuu/bitlybot/pkg/bitly"
 	"github.com/OscarLuu/bitlybot/pkg/scraper"
@@ -20,7 +21,6 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Instead of searching for anything that starts with ^http
 	// we should parse the link out of m.Content
-	// blah bit.ly blah
 	re := regexp.MustCompile(`http([^\s]+)`)
 	if re.MatchString(m.Content) {
 		link := re.FindString(m.Content)
@@ -40,7 +40,8 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 			// creating and sending the message
 			log.Infof("created short link %v", short)
-			shortAuthor := " - " + (string(m.Author.Username) + "\n\n" + scrape + "\n" + short)
+			message := strings.Replace(m.Content, link, short, 1)
+			shortAuthor := " - " + (string(m.Author.Username) + "\n" + scrape + "\n" + message)
 			s.ChannelMessageSend(m.ChannelID, shortAuthor)
 
 			// deleting the message
