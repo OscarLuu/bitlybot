@@ -11,24 +11,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// OnMessageCreate checks for new messages that are created
-func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	// Checks if the message creator is the same as the bot
-	// if it is the same then ignore it
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
-
-	// Instead of searching for anything that starts with ^http
-	// we should parse the link out of m.Content
+func regexCompile(s *discordgo.Session, content string, chanID string, messageID string, user string) {
 	re := regexp.MustCompile(`http([^\s]+)`)
-	if re.MatchString(m.Content) {
-		link := re.FindString(m.Content)
+	if re.MatchString(content) {
+		link := re.FindString(content)
 		short, err := bitly.Shorten(link)
 		log.Infof("creating short link %v", short)
 		if err != nil {
 			log.Errorf("creating short link %v", err)
-			s.ChannelMessageSend(m.ChannelID, "Request resulted in an error, please try again.")
+			s.ChannelMessageSend(chanID, "Request resulted in an error, please try again.")
 		} else {
 			// scraping the title
 			log.Infoln("scraping the webpage for the title")
@@ -40,18 +31,31 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 			// creating and sending the message
 			log.Infof("created short link %v", short)
-			message := strings.Replace(m.Content, link, short, 1)
-			shortAuthor := " - " + (string(m.Author.Username) + "\n" + scrape + "\n" + message)
-			s.ChannelMessageSend(m.ChannelID, shortAuthor)
+			message := strings.Replace(content, link, short, 1)
+			shortAuthor := " - " + (string(user) + "\n" + scrape + "\n" + message)
+			s.ChannelMessageSend(chanID, shortAuthor)
 
 			// deleting the message
-			log.Infof("deleting former message: %v", m.Content)
-			err = MessageDelete(s, m.ChannelID, m.Message.ID)
+			log.Infof("deleting former message: %v", content)
+			err = MessageDelete(s, chanID, messageID)
 			if err != nil {
 				log.Errorf("deleting former message: %v", err)
 			}
-			log.Infof("deleted former message: %v", m.Content)
+			log.Infof("deleted former message: %v", content)
 		}
+	}
+}
+
+// OnMessageCreate checks for new messages that are created
+func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+	// Checks if the message creator is the same as the bot
+	// if it is the same then ignore it
+	if m.Author.ID == s.State.User.ID {
+		return
+	}
+
+	if strings.HasPrefix(m.Content, "~shorten") {
+		regexCompile(s, m.Content, m.ChannelID, m.Message.ID, m.Author.Username)
 	}
 }
 
