@@ -16,9 +16,9 @@ func regexCompile(s *discordgo.Session, content string, chanID string, messageID
 	if re.MatchString(content) {
 		link := re.FindString(content)
 		short, err := bitly.Shorten(link)
-		log.Infof("creating short link %v", short)
+		log.Infof("creating short link: %v", short)
 		if err != nil {
-			log.Errorf("creating short link %v", err)
+			log.Errorf("Error in creating short linK: %v", err)
 			s.ChannelMessageSend(chanID, "Request resulted in an error, please try again.")
 		} else {
 			// scraping the title
