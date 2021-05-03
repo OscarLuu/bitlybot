@@ -1,0 +1,14 @@
+apiVersion: skaffold/v2alpha1
+kind: Config
+metadata:
+  name: bitlybot
+build:
+  artifacts:
+  - image: jharshman/bitlybot
+    context: .
+    docker:
+      dockerfile: build-tools/res/Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - build-tools/res/manifest.yaml
